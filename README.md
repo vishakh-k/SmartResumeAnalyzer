@@ -24,10 +24,21 @@ Smart Resume Analyzer is an AI-powered tool designed to help job seekers optimiz
 ## Installation
 
 1.  **Clone the repository**:
-    ```bash
-    git clone https://github.com/vishakh-k/SmartResumeAnalyzer.git
-    cd SmartResumeAnalyzer
-    ```
+    
+    *   **Option A: Using Git**
+        ```bash
+        git clone https://github.com/vishakh-k/SmartResumeAnalyzer.git
+        cd SmartResumeAnalyzer
+        ```
+    
+    *   **Option B: Without Git (Download ZIP)**
+        *   Click on the **code** button at the top right of the repository page.
+        *   Select **Download ZIP**.
+        *   Extract the ZIP file to your desired folder.
+        *   Open your terminal/command prompt and navigate to the extracted folder:
+            ```bash
+            cd SmartResumeAnalyzer-main
+            ```
 
 2.  **Create a virtual environment** (recommended):
     ```bash
