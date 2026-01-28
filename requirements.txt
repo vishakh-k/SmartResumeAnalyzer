@@ -1,0 +1,10 @@
+Flask
+Flask-SQLAlchemy
+PyPDF2
+pandas
+scikit-learn
+mysql-connector-python
+spacy
+textblob
+Flask-Login
+Flask-Bcrypt

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Smart Resume Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <header class="glass">
+        <div class="logo">Smart Resume Analyzer Admin</div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="{{ url_for('admin_dashboard') }}" class="active">Dashboard</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar glass" style="margin-left: 20px; top: 100px; height: calc(100vh - 120px);">
+            <ul style="list-style: none; padding: 0;">
+                <li style="margin-bottom: 20px;"><a href="#" style="color: white; font-weight: bold;">Overview</a></li>
+                <li style="margin-bottom: 20px;"><a href="#applicants" style="color: #ccc;">Applicants Data</a></li>
+                <li style="margin-bottom: 20px;"><a href="#analytics" style="color: #ccc;">Analytics</a></li>
+                <li style="margin-bottom: 20px;"><a href="#feedback" style="color: #ccc;">Feedback</a></li>
+            </ul>
+        </aside>
+
+        <div class="main-content">
+
+            <div class="stats-grid">
+                <div class="stat-card glass">
+                    <h3>Total Users</h3>
+                    <div class="stat-value">{{ total_users }}</div>
+                </div>
+                <div class="stat-card glass">
+                    <h3>Resumes Analyzed</h3>
+                    <div class="stat-value">{{ resumes|length }}</div>
+                </div>
+                <div class="stat-card glass">
+                    <h3>Avg Score</h3>
+                    <div class="stat-value">{{ avg_score }}</div>
+                </div>
+                <div class="stat-card glass">
+                    <h3>Placements</h3>
+                    <div class="stat-value">--</div>
+                </div>
+            </div>
+
+            <h2 id="analytics" style="margin-bottom: 20px;">Analytics</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div class="chart-container glass">
+                    <canvas id="rolesChart"></canvas>
+                </div>
+                <div class="chart-container glass">
+                    <canvas id="scoresChart"></canvas>
+                </div>
+            </div>
+
+            <h2 id="applicants" style="margin-top: 50px; margin-bottom: 20px;">Applicants Data</h2>
+            <div class="glass" style="padding: 20px; overflow-x: auto;">
+                <div style="text-align: right; margin-bottom: 15px;">
+                    <button class="btn" style="padding: 5px 15px; font-size: 0.8rem;">Download CSV</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role Predicted</th>
+                            <th>Score</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resume in resumes %}
+                        <tr>
+                            <td>#{{ resume.id }}</td>
+                            <td>{{ resume.name }}</td>
+                            <td>{{ resume.email }}</td>
+                            <td>{{ resume.predicted_role }}</td>
+                            <td>{{ resume.resume_score }}</td>
+                            <td>{{ resume.upload_date.strftime('%Y-%m-%d') }}</td>
+                            <td><a href="#" style="color: var(--secondary-color);">View</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <script id="role-data" type="application/json">
+        {{ role_distribution | tojson }}
+    </script>
+    <script>
+        // Charts using Chart.js
+        const roleDataElement = document.getElementById('role-data');
+        const roleData = JSON.parse(roleDataElement.textContent || '{}');
+        const roleLabels = Object.keys(roleData);
+        const roleCounts = Object.values(roleData);
+
+        const ctxRoles = document.getElementById('rolesChart').getContext('2d');
+        new Chart(ctxRoles, {
+            type: 'pie',
+            data: {
+                labels: roleLabels,
+                datasets: [{
+                    label: '# of Applicants',
+                    data: roleCounts,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)'
+                    ],
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: 'white' } },
+                    title: { display: true, text: 'Predicted Roles Distribution', color: 'white' }
+                }
+            }
+        });
+
+        // Placeholder for score distribution logic (would need backend calculation)
+        const ctxScores = document.getElementById('scoresChart').getContext('2d');
+        new Chart(ctxScores, {
+            type: 'bar',
+            data: {
+                labels: ['0-40', '41-60', '61-80', '81-100'],
+                datasets: [{
+                    label: 'Resume Scores',
+                    data: [5, 10, 25, 15], // Static for now, can be dynamic similarly
+                    backgroundColor: 'rgba(108, 99, 255, 0.7)',
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { labels: { color: 'white' } },
+                    title: { display: true, text: 'Score Ranges', color: 'white' }
+                },
+                scales: {
+                    y: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    x: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

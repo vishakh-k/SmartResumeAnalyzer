@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Smart Resume Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+
+    <div class="glass" style="width: 400px; padding: 40px; text-align: center;">
+        <div class="logo" style="margin-bottom: 30px;">Smart Resume Analyzer</div>
+
+        <h2>Create Account</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div
+            style="padding: 10px; margin-bottom: 20px; border-radius: 5px; background: rgba(255,255,255,0.1); color: {{ '#ff6b6b' if category == 'danger' else '#51cf66' }};">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form action="/register" method="POST">
+            <div style="margin-bottom: 20px; text-align: left;">
+                <label style="display: block; margin-bottom: 5px; color: #ccc;">Username</label>
+                <input type="text" name="username" required
+                    style="width: 100%; padding: 10px; border-radius: 8px; border: none; background: rgba(255,255,255,0.1); color: white;">
+            </div>
+            <div style="margin-bottom: 20px; text-align: left;">
+                <label style="display: block; margin-bottom: 5px; color: #ccc;">Email</label>
+                <input type="email" name="email" required
+                    style="width: 100%; padding: 10px; border-radius: 8px; border: none; background: rgba(255,255,255,0.1); color: white;">
+            </div>
+            <div style="margin-bottom: 30px; text-align: left;">
+                <label style="display: block; margin-bottom: 5px; color: #ccc;">Password</label>
+                <input type="password" name="password" required
+                    style="width: 100%; padding: 10px; border-radius: 8px; border: none; background: rgba(255,255,255,0.1); color: white;">
+            </div>
+            <button type="submit" class="btn" style="width: 100%;">Sign Up</button>
+        </form>
+
+        <p style="margin-top: 20px; color: #aaa;">Already have an account? <a href="{{ url_for('login') }}"
+                style="color: var(--primary-color);">Login</a></p>
+        <p style="margin-top: 10px;"><a href="/" style="color: #aaa; font-size: 0.9rem;">Back to Home</a></p>
+    </div>
+
+</body>
+
+</html>
